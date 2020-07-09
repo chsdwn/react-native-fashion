@@ -21,7 +21,7 @@ const AuthenticationNavigator = () => (
 export const App = () => {
   return (
     <NavigationContainer>
-      <StatusBar barStyle="default" />
+      <StatusBar barStyle="light-content" backgroundColor="black" />
       <SafeAreaView style={{ flex: 1 }}>
         <AuthenticationNavigator />
       </SafeAreaView>
