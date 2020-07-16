@@ -3,19 +3,14 @@ import { SafeAreaView, StyleSheet, View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ThemeProvider } from '@shopify/restyle';
+import { Routes } from './src/components/Navigation';
 
 import { OnBoarding } from './src/Authentication/OnBoarding';
 import { Welcome } from './src/Authentication/Welcome';
 
 import { theme } from './src/theme/Theme';
 
-// const fonts = {
-//   'SFProText-Bold': require('./assets/fonts/SF-Pro-Text-Bold.otf'),
-//   'SFProText-Semibold': require('./assets/fonts/SF-Pro-Text-Semibold.otf'),
-//   'SFProText-Regular': require('./assets/fonts/SF-Pro-Text-Regular.otf'),
-// };
-
-const AuthenticationStack = createStackNavigator();
+const AuthenticationStack = createStackNavigator<Routes>();
 
 const AuthenticationNavigator = () => (
   <AuthenticationStack.Navigator headerMode="none">

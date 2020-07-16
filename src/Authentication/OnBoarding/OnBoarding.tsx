@@ -1,16 +1,17 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Animated, { multiply, divide } from 'react-native-reanimated';
-import {
-  interpolateColor,
-  onScrollEvent,
-  useScrollHandler,
-  useValue,
-} from 'react-native-redash';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  multiply,
+  divide,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
+import { interpolateColor, useScrollHandler } from 'react-native-redash';
 
 import { Slide, SLIDE_HEIGHT } from './Slide';
 import { Subslide } from './Subslide';
 import { Dot } from '../../components/Dot';
+import { Routes, StackNavigationProps } from '../../components/Navigation';
 
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../../constants/app';
 
@@ -25,7 +26,11 @@ const slides: ISlide[] = [
     description:
       "Confused about your outfits? Don't worry! Find the best outfit here!",
     color: '#BFEAF5',
-    picture: require('../../../assets/images/1.png'),
+    picture: {
+      src: require('../../../assets/images/1.png'),
+      width: 1080,
+      height: 1920,
+    },
   },
   {
     title: 'Playful',
@@ -33,7 +38,11 @@ const slides: ISlide[] = [
     description:
       'Hating the clothes in your wardrobe? Explore hundreds of outfit ideas',
     color: '#BEECC4',
-    picture: require('../../../assets/images/2.png'),
+    picture: {
+      src: require('../../../assets/images/2.png'),
+      width: 1080,
+      height: 1920,
+    },
   },
   {
     title: 'Excentric',
@@ -41,7 +50,11 @@ const slides: ISlide[] = [
     description:
       'Create your individual & unique style and look amazing everyday',
     color: '#FFE4D9',
-    picture: require('../../../assets/images/3.png'),
+    picture: {
+      src: require('../../../assets/images/3.png'),
+      width: 1080,
+      height: 1920,
+    },
   },
   {
     title: 'Funky',
@@ -49,13 +62,18 @@ const slides: ISlide[] = [
     description:
       'Discover the latest trends in fashion and explore your personality',
     color: '#FFDDDD',
-    picture: require('../../../assets/images/4.png'),
+    picture: {
+      src: require('../../../assets/images/4.png'),
+      width: 1080,
+      height: 1920,
+    },
   },
 ];
 
-export const OnBoarding = () => {
+export const OnBoarding = ({
+  navigation,
+}: StackNavigationProps<Routes, 'OnBoarding'>) => {
   const scroll = useRef<Animated.ScrollView>(null);
-  // TODO: scrollHandler useScrollHandler?
   const { scrollHandler, x } = useScrollHandler();
   const backgroundColor = interpolateColor(x, {
     inputRange: slides.map((_, i) => i * WINDOW_WIDTH),
@@ -65,6 +83,31 @@ export const OnBoarding = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.slider, { backgroundColor }]}>
+        {slides.map(({ picture }, index) => {
+          const opacity = interpolate(x, {
+            inputRange: [
+              (index - 0.5) * WINDOW_WIDTH,
+              index * WINDOW_WIDTH,
+              (index + 0.5) * WINDOW_WIDTH,
+            ],
+            outputRange: [0, 1, 0],
+            extrapolate: Extrapolate.CLAMP,
+          });
+
+          return (
+            <Animated.View key={index} style={[styles.underlay, { opacity }]}>
+              <Image
+                source={picture.src}
+                style={{
+                  width: (WINDOW_WIDTH * (picture.height / picture.width)) / 3,
+                  height:
+                    (WINDOW_HEIGHT * (picture.height / picture.width)) / 3,
+                }}
+              />
+            </Animated.View>
+          );
+        })}
+
         <Animated.ScrollView
           ref={scroll}
           horizontal
@@ -73,8 +116,8 @@ export const OnBoarding = () => {
           showsHorizontalScrollIndicator={false}
           bounces={false}
           {...scrollHandler}>
-          {slides.map(({ title, picture }, i) => (
-            <Slide key={i} {...{ title, picture }} right={i % 2 === 1} />
+          {slides.map(({ title }, i) => (
+            <Slide key={i} {...{ title }} right={i % 2 === 1} />
           ))}
         </Animated.ScrollView>
       </Animated.View>
@@ -99,20 +142,26 @@ export const OnBoarding = () => {
               width: WINDOW_WIDTH * slides.length,
               transform: [{ translateX: multiply(x, -1) }],
             }}>
-            {slides.map(({ subtitle, description }, i) => (
-              <Subslide
-                key={i}
-                last={i === slides.length - 1}
-                onPress={() => {
-                  if (scroll.current) {
-                    scroll.current
-                      .getNode()
-                      .scrollTo({ x: WINDOW_WIDTH * (i + 1), animated: true });
-                  }
-                }}
-                {...{ subtitle, description }}
-              />
-            ))}
+            {slides.map(({ subtitle, description }, i) => {
+              const last = i === slides.length - 1;
+
+              return (
+                <Subslide
+                  key={i}
+                  onPress={() => {
+                    if (last) {
+                      navigation.navigate('Welcome');
+                    } else {
+                      scroll.current?.getNode().scrollTo({
+                        x: WINDOW_WIDTH * (i + 1),
+                        animated: true,
+                      });
+                    }
+                  }}
+                  {...{ subtitle, description, last }}
+                />
+              );
+            })}
           </Animated.View>
         </View>
       </View>
@@ -128,6 +177,13 @@ const styles = StyleSheet.create({
   slider: {
     height: SLIDE_HEIGHT,
     borderBottomRightRadius: BORDER_RADIUS,
+  },
+  underlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    borderBottomRightRadius: BORDER_RADIUS,
+    overflow: 'hidden',
   },
   footer: {
     flex: 1,
