@@ -58,7 +58,7 @@ interface ISocialIconProps {
 }
 const SocialIcon: React.FC<ISocialIconProps> = ({ children }) => (
   <Box
-    marginHorizontal="l"
+    marginHorizontal="s"
     backgroundColor="white"
     width={SIZE}
     height={SIZE}
