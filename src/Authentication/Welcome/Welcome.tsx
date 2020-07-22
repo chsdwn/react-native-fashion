@@ -3,6 +3,7 @@ import { StyleSheet, View, Image } from 'react-native';
 
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../../constants/app';
 import { Button } from '../../components/Button';
+import { StackNavigationProps, Routes } from '../../components/Navigation';
 
 import { IPicture } from 'src/models/IPicture';
 
@@ -14,7 +15,9 @@ const picture: IPicture = {
   height: 1920,
 };
 
-export const Welcome = () => {
+export const Welcome = ({
+  navigation,
+}: StackNavigationProps<Routes, 'Welcome'>) => {
   return (
     <Box flex={1} backgroundColor="white">
       <Box
@@ -54,7 +57,7 @@ export const Welcome = () => {
           <Button
             variant="primary"
             label="Have an account? Login"
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Login')}
           />
           <Button label="Join us, it's Free" onPress={() => {}} />
           <Button
