@@ -2,9 +2,8 @@ import React, { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { Box, theme } from '../../theme/Theme';
-
-const SIZE = theme.borderRadii.l * 2;
+import { useTheme } from '@shopify/restyle';
+import { Box, Theme } from '../../theme/Theme';
 
 const FacebookIconSGV = () => (
   <Svg height={25} width={25} viewBox="0 0 512 512">
@@ -55,13 +54,14 @@ const AppleIconSVG = () => (
 
 interface ISocialIconProps {
   children: ReactNode;
+  size: number;
 }
-const SocialIcon: React.FC<ISocialIconProps> = ({ children }) => (
+const SocialIcon: React.FC<ISocialIconProps> = ({ children, size }) => (
   <Box
     marginHorizontal="s"
     backgroundColor="white"
-    width={SIZE}
-    height={SIZE}
+    width={size}
+    height={size}
     borderRadius="l"
     justifyContent="center"
     alignItems="center">
@@ -70,15 +70,18 @@ const SocialIcon: React.FC<ISocialIconProps> = ({ children }) => (
 );
 
 export const SocialLogin = () => {
+  const theme = useTheme<Theme>();
+  const SIZE = theme.borderRadii.l * 2;
+
   return (
     <Box flexDirection="row" justifyContent="center">
-      <SocialIcon>
+      <SocialIcon size={SIZE}>
         <FacebookIconSGV />
       </SocialIcon>
-      <SocialIcon>
+      <SocialIcon size={SIZE}>
         <GoogleIconSVG />
       </SocialIcon>
-      <SocialIcon>
+      <SocialIcon size={SIZE}>
         <AppleIconSVG />
       </SocialIcon>
     </Box>

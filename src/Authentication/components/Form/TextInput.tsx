@@ -10,7 +10,8 @@ import Icon from 'react-native-vector-icons/Feather';
 
 interface IProps extends RNTextInputProps {
   icon: string;
-  validator: (input: string) => boolean;
+  error?: string;
+  touched?: boolean;
 }
 
 const Valid = true;
@@ -20,23 +21,17 @@ type InputState = typeof Valid | typeof Invalid | typeof Pristine;
 
 const SIZE = theme.borderRadii.m * 2;
 
-export const TextInput: React.FC<IProps> = ({ icon, validator, ...props }) => {
+export const TextInput: React.FC<IProps> = ({
+  icon,
+  error,
+  touched,
+  ...props
+}) => {
   const [state, setState] = useState<InputState>(Pristine);
   const [input, setInput] = useState('');
 
-  const reColor =
-    state === Pristine ? 'text' : state === Valid ? 'primary' : 'danger';
+  const reColor = !touched ? 'text' : error ? 'danger' : 'primary';
   const color = theme.colors[reColor];
-
-  const validate = () => {
-    const valid = validator(input);
-    setState(valid);
-  };
-
-  const onChangeText = (text: string) => {
-    setInput(text);
-    if (state !== Pristine) validate();
-  };
 
   return (
     <Box
@@ -54,25 +49,19 @@ export const TextInput: React.FC<IProps> = ({ icon, validator, ...props }) => {
         <RNTextInput
           underlineColorAndroid="transparent"
           placeholderTextColor={color}
-          onBlur={validate}
-          {...{ onChangeText }}
           {...props}
         />
       </Box>
-      {(state === Valid || state === Invalid) && (
+      {touched && (
         <Box
           borderRadius="m"
           height={SIZE}
           width={SIZE}
           justifyContent="center"
           alignItems="center"
-          backgroundColor={state === Valid ? 'primary' : 'danger'}
+          backgroundColor={!error ? 'primary' : 'danger'}
           overflow="hidden">
-          <Icon
-            name={state === Valid ? 'check' : 'x'}
-            color="white"
-            size={12}
-          />
+          <Icon name={!error ? 'check' : 'x'} color="white" size={12} />
         </Box>
       )}
     </Box>

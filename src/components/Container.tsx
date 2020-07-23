@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, Image, StatusBar } from 'react-native';
 
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../constants/app';
 
-import { Box, theme } from '../theme/Theme';
+import { useTheme } from '@shopify/restyle';
+import { Box, Theme } from '../theme/Theme';
 
 export const assets = [require('../../assets/patterns/1.png')];
 
@@ -17,6 +18,8 @@ interface IProps {
 }
 
 export const Container: React.FC<IProps> = ({ children, footer }) => {
+  const theme = useTheme<Theme>();
+
   return (
     <Box flex={1} backgroundColor="white">
       <Box
